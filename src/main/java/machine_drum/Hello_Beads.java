@@ -9,6 +9,8 @@ import net.beadsproject.beads.ugens.WavePlayer;
 
 public class Hello_Beads {
     public static void macos() {
+
+        //set up audio context
         JavaSoundAudioIO jsaio = new JavaSoundAudioIO(512);
         JavaSoundAudioIO.printMixerInfo();
         jsaio.selectMixer(3);
@@ -21,7 +23,6 @@ public class Hello_Beads {
         Glide gainGlide = new Glide(ac, 0.0f, 5000.0f);
 
         //create a Gain to control the sine wave volume
-
         Gain sineGain = new Gain(ac, 1, gainGlide);
 
         //add the wave generator to the gain
