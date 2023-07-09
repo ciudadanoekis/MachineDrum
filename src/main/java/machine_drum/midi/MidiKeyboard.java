@@ -37,7 +37,7 @@ import javax.sound.midi.Transmitter;
  */
 public class MidiKeyboard
 {
-    private String deviceName = "nanoKEY 1 KEYBOARD";
+    private String deviceName = "Xkey";
 
     private MidiDevice nkDevice;
     private Transmitter nkTransmitter;
@@ -65,7 +65,7 @@ public class MidiKeyboard
         // load mappings from file if the file exists
         try
         {
-            String configFilename = System.getProperty("user.home") + "\\MidiKeyboard.java.cfg";
+            String configFilename = System.getProperty("MachineDrum") + "\\MidiKeyboard.java.cfg";
             File cfg = new File(configFilename);
             if( cfg.exists() )
             {
@@ -248,7 +248,8 @@ public class MidiKeyboard
             try
             {
                 // save to file
-                String outputFilename = System.getProperty("user.home") + "\\MidiKeyboard.java.cfg";
+                String outputFilename =
+                        System.getProperty("MachineDrum") + "\\MidiKeyboard.java.cfg";
                 PrintWriter out = new PrintWriter(outputFilename);
                 out.println(deviceName);
 

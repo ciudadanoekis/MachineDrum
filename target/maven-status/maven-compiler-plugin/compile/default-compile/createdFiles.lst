@@ -1,2 +1,12 @@
+machine_drum/midi/MidiKeyboard$MidiInputReceiver.class
+machine_drum/midi/MidiController$ConfigureReceiver.class
+machine_drum/midi/MidiController$MidiInputReceiver.class
+machine_drum/midi/MidiController$MidiInputEvent.class
+machine_drum/midi/MidiKeyboard$ConfigureReceiver.class
 machine_drum/MachineDrum.class
 machine_drum/Hello_Beads.class
+machine_drum/midi/MidiKeyboard$MidiInputEvent.class
+machine_drum/midi/MidiKeyboard.class
+machine_drum/midi/MidiController.class
+machine_drum/midi/MidiControllerConfigure.class
+machine_drum/midi/MidiKeyboardConfigure.class
