@@ -42,9 +42,9 @@ public class MidiKeyboard
     private MidiDevice nkDevice;
     private Transmitter nkTransmitter;
 
-    private ArrayList<ActionListener> listeners;
+    private final ArrayList<ActionListener> listeners;
 
-    private Queue<ShortMessage> midiQueue;
+    private final Queue<ShortMessage> midiQueue;
     public ShortMessage mostRecentMidiEvent;
 
     private boolean configured = false;
