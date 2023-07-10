@@ -9,13 +9,19 @@ import net.beadsproject.beads.ugens.Glide;
 import net.beadsproject.beads.ugens.WavePlayer;
 
 import javax.sound.midi.ShortMessage;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Hello_Midi_Poliphonic {
-    WavePlayer sine;
-    Gain sineGain;
-    Glide gainGlide;
+    WavePlayer osc1;
+    WavePlayer osc2;
+    WavePlayer osc3;
+    Gain sineGain1;
+    Gain sineGain2;
+    Gain sineGain3;
+    Glide gainGlide1;
+    Glide gainGlide2;
+    Glide gainGlide3;
 
 
     public static void main(String[] args) {
@@ -31,35 +37,50 @@ public class Hello_Midi_Poliphonic {
         jsaio.selectMixer(3);
         AudioContext ac = new AudioContext(jsaio);
 
-        sine = new WavePlayer(ac, 440.0f, Buffer.SINE);
-        gainGlide = new Glide(ac, 0.0f, 50.0f);
-        sineGain = new Gain(ac, 1, gainGlide);
+        List<WavePlayer> oscillators = new ArrayList<>();
 
-        sineGain.addInput(sine);
+        osc1 = new WavePlayer(ac, 440.0f, Buffer.SINE);
+        osc2 = new WavePlayer(ac, 440.0f, Buffer.SAW);
+        osc3 = new WavePlayer(ac, 440.0f, Buffer.TRIANGLE);
 
-        ac.out.addInput(sineGain);
+        oscillators.add(osc1);
+        oscillators.add(osc2);
+        oscillators.add(osc3);
+
+        gainGlide1 = new Glide(ac, 0.0f, 50.0f);
+        gainGlide2 = new Glide(ac, 0.0f, 50.0f);
+        gainGlide3 = new Glide(ac, 0.0f, 50.0f);
+        sineGain1 = new Gain(ac, 1, gainGlide1);
+        sineGain2 = new Gain(ac, 1, gainGlide2);
+        sineGain3 = new Gain(ac, 1, gainGlide3);
+
+        sineGain1.addInput(osc1);
+        sineGain2.addInput(osc2);
+        sineGain3.addInput(osc3);
+
+
+        ac.out.addInput(sineGain1);
+        ac.out.addInput(sineGain2);
+        ac.out.addInput(sineGain3);
 
         // set up the keyboard input
         MidiKeyboard keys = new MidiKeyboard();
-        keys.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // if the event is not null
-                if (e != null) {
-                    // if the event is a MIDI event
-                    if (e.getSource() instanceof ShortMessage) {
-                        // get the MIDI event
-                        ShortMessage sm = (ShortMessage) e.getSource();
+        keys.addActionListener(midiEvent -> {
+            // if the event is not null
+            if (midiEvent != null) {
+                // if the event is a MIDI event
+                if (midiEvent.getSource() instanceof ShortMessage) {
+                    // get the MIDI event
+                    ShortMessage sm = (ShortMessage) midiEvent.getSource();
 
-                        // if the event is a key down
-                        if (sm.getCommand() == MidiKeyboard.NOTE_ON && sm.getData2() > 1) {
-                            keyDown(sm.getData1());
-                            System.out.println(keys.getMidiInputEvent());
-                        }
-                        // if the event is a key up
-                        else if (sm.getCommand() == MidiKeyboard.NOTE_OFF) {
-                            keyUp(sm.getData1());
-                        }
+                    // if the event is a key down
+                    if (sm.getCommand() == MidiKeyboard.NOTE_ON && sm.getData2() > 1) {
+                        keyDown(sm.getData1(), ac, oscillators);
+                        System.out.println(keys.getMidiInputEvent());
+                    }
+                    // if the event is a key up
+                    else if (sm.getCommand() == MidiKeyboard.NOTE_OFF) {
+                        keyUp(sm.getData1());
                     }
                 }
             }
@@ -78,16 +99,24 @@ public class Hello_Midi_Poliphonic {
         return (float) (Math.pow(2, exponent) * 440.0f);
     }
 
-    public void keyDown(int midiPitch) {
-        if (sine != null && gainGlide != null) {
-            sine.setFrequency(pitchToFrequency(midiPitch));
-            gainGlide.setValue(0.9f);
+    public void keyDown(int midiPitch, AudioContext ac, List<WavePlayer> oscillators) {
+        for(WavePlayer osc : oscillators) {
+            if(osc != null && gainGlide1 != null && gainGlide2 != null && gainGlide3 != null) {
+                osc1.setFrequency(pitchToFrequency(midiPitch));
+                osc2.setFrequency(pitchToFrequency(midiPitch));
+                osc3.setFrequency(pitchToFrequency(midiPitch));
+                gainGlide1.setValue(0.3f);
+                gainGlide2.setValue(0.3f);
+                gainGlide3.setValue(0.3f);
+            }
         }
     }
 
     public void keyUp(int midiPitch) {
-        if (gainGlide != null) {
-            gainGlide.setValue(0.0f);
+        if (gainGlide1 != null  && gainGlide2 != null && gainGlide3 != null) {
+            gainGlide1.setValue(0.0f);
+            gainGlide2.setValue(0.0f);
+            gainGlide3.setValue(0.0f);
         }
     }
 }
