@@ -47,7 +47,7 @@ public class MidiKeyboard
     private final Queue<ShortMessage> midiQueue;
     public ShortMessage mostRecentMidiEvent;
 
-    private boolean configured = false;
+    private boolean configured;
 
     // some constants that define NOTE_ON and NOTE_OFF events
     public static final int NOTE_ON = 0x90;
@@ -55,8 +55,8 @@ public class MidiKeyboard
 
     public MidiKeyboard()
     {
-        listeners = new ArrayList<ActionListener>();
-        midiQueue = new LinkedList<ShortMessage>();
+        listeners = new ArrayList<>();
+        midiQueue = new LinkedList<>();
         mostRecentMidiEvent = null;
         configured = false;
 
@@ -93,16 +93,12 @@ public class MidiKeyboard
         nkDevice = null;
         nkTransmitter = null;
         MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < infos.length; i++)
-        {
-            try
-            {
-                MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-                MidiDevice.Info d = infos[i];
+        for (MidiDevice.Info info : infos) {
+            try {
+                MidiDevice device = MidiSystem.getMidiDevice(info);
 
-                if( d.getName().contains(deviceName) )
-                {
-                    System.out.println("Opening " + d.getName());
+                if (info.getName().contains(deviceName)) {
+                    System.out.println("Opening " + info.getName());
                     System.out.println("  max receivers: " + device.getMaxReceivers());
                     System.out.println("  max transmitters: " + device.getMaxTransmitters());
 
@@ -113,9 +109,7 @@ public class MidiKeyboard
 
                     nkDevice.open();
                 }
-            }
-            catch (MidiUnavailableException e)
-            {
+            } catch (MidiUnavailableException e) {
                 // Handle or throw exception...
                 System.out.println("Exception occurred while getting MIDI devices!");
                 System.out.println(e.getMessage());

@@ -13,15 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hello_Midi_Poliphonic {
-    WavePlayer osc1;
-    WavePlayer osc2;
-    WavePlayer osc3;
-    Gain sineGain1;
-    Gain sineGain2;
-    Gain sineGain3;
-    Glide gainGlide1;
-    Glide gainGlide2;
-    Glide gainGlide3;
+    private WavePlayer osc1;
+    private WavePlayer osc2;
+    private WavePlayer osc3;
+    private Gain sineGain1;
+    private Gain sineGain2;
+    private Gain sineGain3;
+    private Glide gainGlide1;
+    private Glide gainGlide2;
+    private Glide gainGlide3;
+    private int lastKeyPressed;
 
 
     public static void main(String[] args) {
@@ -75,7 +76,7 @@ public class Hello_Midi_Poliphonic {
 
                     // if the event is a key down
                     if (sm.getCommand() == MidiKeyboard.NOTE_ON && sm.getData2() > 1) {
-                        keyDown(sm.getData1(), ac, oscillators);
+                        keyDown(sm.getData1(), oscillators);
                         System.out.println(keys.getMidiInputEvent());
                     }
                     // if the event is a key up
@@ -99,9 +100,10 @@ public class Hello_Midi_Poliphonic {
         return (float) (Math.pow(2, exponent) * 440.0f);
     }
 
-    public void keyDown(int midiPitch, AudioContext ac, List<WavePlayer> oscillators) {
+    public void keyDown(int midiPitch, List<WavePlayer> oscillators) {
         for(WavePlayer osc : oscillators) {
             if(osc != null && gainGlide1 != null && gainGlide2 != null && gainGlide3 != null) {
+                lastKeyPressed = midiPitch;
                 osc1.setFrequency(pitchToFrequency(midiPitch));
                 osc2.setFrequency(pitchToFrequency(midiPitch));
                 osc3.setFrequency(pitchToFrequency(midiPitch));
@@ -113,7 +115,7 @@ public class Hello_Midi_Poliphonic {
     }
 
     public void keyUp(int midiPitch) {
-        if (gainGlide1 != null  && gainGlide2 != null && gainGlide3 != null) {
+        if (gainGlide1 != null  && gainGlide2 != null && gainGlide3 != null && lastKeyPressed == midiPitch) {
             gainGlide1.setValue(0.0f);
             gainGlide2.setValue(0.0f);
             gainGlide3.setValue(0.0f);
